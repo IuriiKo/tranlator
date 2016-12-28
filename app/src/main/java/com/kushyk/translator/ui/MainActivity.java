@@ -12,17 +12,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.services.translate.Translate;
 import com.google.api.services.translate.model.LanguagesListResponse;
 import com.google.api.services.translate.model.LanguagesResource;
 import com.google.api.services.translate.model.TranslationsListResponse;
 import com.google.common.collect.Lists;
 import com.kushyk.translator.R;
-import com.kushyk.translator.util.RestQuery;
+import com.kushyk.translator.TranslatorService;
 
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,22 +37,15 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.outLanguageView)
     Spinner outLanguageView;
     private Unbinder unbinder;
-    private Translate translate;
+    private TranslatorService translateService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);
-        initTranslate();
+        translateService = new TranslatorService();
         getLanguages();
-    }
-
-    private void initTranslate() {
-        translate = new Translate.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory() , null)
-                .build();
     }
 
     @OnEditorAction(R.id.translateEditView)
@@ -77,14 +66,7 @@ public class MainActivity extends AppCompatActivity {
             showToast(R.string.put_some_text);
             return;
         }
-        Observable.fromCallable(()->{
-                Translate.Translations.List list = translate.translations().list(
-                        Arrays.asList(text),
-                        targetLanguage);
-                list.setKey(RestQuery.API_KEY);
-
-            return list.execute();
-        })
+        Observable.fromCallable(() -> translateService.translate(text, targetLanguage))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onSuccessTranslate, this::onErrorTranslate);
@@ -92,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSuccessTranslate(TranslationsListResponse translationsListResponse) {
         Log.d(LOG_TAG, translationsListResponse.toString());
-        new AlertDialog.Builder(this).setMessage(translationsListResponse.getTranslations().get(0).getTranslatedText()).create().show();
+        String[] translateTexts = Lists.transform(translationsListResponse.getTranslations(), res -> res.getTranslatedText()).toArray(new String[0]);
+        AlertDialog.Builder  builder= new AlertDialog.Builder(this);
+        builder.setItems(translateTexts, null);
+        builder.create().show();
     }
 
     private void onErrorTranslate(Throwable throwable) {
@@ -101,11 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getLanguages() {
-        Observable.fromCallable(()->{
-            Translate.Languages.List list = translate.languages().list();
-            list.setKey(RestQuery.API_KEY);
-            return list.execute();
-        })
+        Observable.fromCallable(()->translateService.languages())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onSuccessGetLanguage, this::onErrorGetLanguage);
