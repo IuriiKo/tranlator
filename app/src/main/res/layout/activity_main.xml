@@ -17,22 +17,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:src="@drawable/ic_swap_horiz_black_24dp"/>
 
     <Spinner
         android:id="@+id/inLanguageView"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_toStartOf="@id/translateIconView"
         android:layout_toLeftOf="@+id/translateIconView"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_height="wrap_content"/>
 
     <Spinner
         android:id="@+id/outLanguageView"
-        android:layout_width="24dp"
+        android:layout_width="wrap_content"
         android:layout_toEndOf="@id/translateIconView"
         android:layout_toRightOf="@id/translateIconView"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_height="wrap_content"/>
 
     <EditText
