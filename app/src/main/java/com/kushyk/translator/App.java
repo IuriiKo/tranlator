@@ -20,6 +20,6 @@ public class App extends Application {
     }
 
     private static void initRemoteService() {
-        service = new RemoteService(RemoteService.initRetrofit(UrlList.BASE_URL));
+//        service = new RemoteService(RemoteService.initRetrofit(UrlList.BASE_URL));
     }
 }
