@@ -1,25 +1,23 @@
 package com.kushyk.translator;
 
 import android.app.Application;
-
-import com.kushyk.translator.remote.RemoteService;
-import com.kushyk.translator.remote.UrlList;
+import android.content.Context;
 
 /**
  * Created by Iurii Kushyk on 26.12.2016.
  */
 
 public class App extends Application {
-
-    public static RemoteService service;
+    private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        initRemoteService();
+        context = this;
+
     }
 
-    private static void initRemoteService() {
-//        service = new RemoteService(RemoteService.initRetrofit(UrlList.BASE_URL));
+    public static Context getContext() {
+        return context;
     }
 }

@@ -5,4 +5,5 @@
     <string name="cant_translate">Can\'t translate</string>
     <string name="put_some_text">Put some text</string>
     <string name="server_error">Can\'t connect to the server</string>
+    <string name="no_translation">No translation</string>
 </resources>
